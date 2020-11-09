@@ -31,11 +31,19 @@ function start() {
 
   document.getElementById('order').innerHTML = tableString;
 
-  alert(draftData);
-
+  
 }
 
-draftURL = "https://raw.githubusercontent.com/dustywhite7/moneyball-webapp/master/data/playersheet2020.csv";
+async function grabData() {
+  try{
+    const response = fetch("https://raw.githubusercontent.com/dustywhite7/moneyball-webapp/master/data/playersheet2020.json");
+    const data = await (await response).json();
+    console.log(`Here: ${data[0]['first']}`)
+} catch(e) {
+    console.log(`Error: ${e}`)
+}
+}
 
-draftData = fetch(draftURL);
 
+
+grabData();
