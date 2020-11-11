@@ -201,15 +201,62 @@ function draftFinal() {
 }
 
 function simulateSeason() {
+  document.getElementById('app').innerHTML = "<h1 class='title'>Simulated Season Results</h1><h3 class='subtitle'>Each team plays each opponent 10 times, resulting in the following outcomes.<br>A team's win probability in each simulated game is calculated with the following equation: <br><br>Pr(win) = 0.5 + 2.032*(OBP<sub>team</sub> - OBP<sub>opponent</sub>) + 0.9*(SLG<sub>team</sub> - SLG<sub>opponent</sub>)</h3><div id='order'></div>";
 
+  teamwins = []
+  for (team=0; team<order.length; team++) {
+    teamwins.push(0);
+  }
+  for (team=0; team<order.length; team++) {
+    for (opponent=team+1; opponent<order.length; opponent++) {
+      results = simulateGames(team+1, opponent+1, 10);
+      teamwins[team]+=results[0];
+      teamwins[opponent]+=results[1];
+    }
+  }
+  teamlosses = []
+  for (team=0; team<order.length; team++) {
+    teamlosses[team] = (order.length-1)*10 - teamwins[team];
+  }
+
+  var table = [];
+
+  for (i=0; i<order.length; i++) {
+    table.push([i+1, teamwins[i], teamlosses[i], (teamwins[i]/((order.length-1)*10)).toPrecision(3)]);
+  }
+
+  var tableString = "";
+  for (i=0; i<table.length; i++) {
+    tableString += "<tr id=team" + table[i][0] + ">";
+    tableString += "<td>" +  table[i][0] + "</td>";
+    tableString += "<td id=wins" + table[i][0] + ">" +  table[i][1] + "</td>";
+    tableString += "<td id=losses" + table[i][0] + ">" +  table[i][2] + "</td>";
+    tableString += "<td id=winpct" + table[i][0] + ">" +  table[i][3] + "</td>";
+    tableString += "</tr>";
+  }
+
+  tableString = '<table class="table"><thead><tr><th>Team Number</th><th>Wins</th><th>Losses</th><th>Win Percentage</th></tr></thead><tbody>' + tableString + '</tbody></table>'
+
+  seasonButton = "<br><br><div class='control'><button type='submit' class='button is-primary' onclick='simulatePlayoffs()'>Simulate Playoffs</button></div>";
+
+  document.getElementById('order').innerHTML = tableString + seasonButton;
 }
 
-function simulateGame() {
-
+function simulateGames(team1, team2, n) {
+  win1 = 0.5 - 2.032*(d3.mean(stats[team1]['obp']) - d3.mean(stats[team2]['obp'])) - 0.9*(d3.mean(stats[team1]['slg']) - d3.mean(stats[team2]['slg']));
+  winloss1 = [0,0];
+  for (i=0; i<n; i++) {
+    if (d3.randomUniform(0,1)()>=win1) {
+      winloss1[0]+=1;
+    } else {
+      winloss1[1]+=1;
+    }
+  }
+  return winloss1;
 }
 
-function simulateSeries() {
-
+function simulatePlayoffs() {
+  document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Round of 16</h3>    <h3>Quarter-Finals</h3><h3>Semi-Finals</h3><h3>Final</h3><h3>Winner</h3></div><div class="tournament-brackets"><ul class="bracket bracket-1"><li class="team-item">A2 <time>14:00</time> C2</li>      <li class="team-item">D1 <time>20:00</time> 3BEF</li>      <li class="team-item">B1 <time>17:00</time> 3ACD</li>      <li class="team-item">F1 <time>20:00</time> E2</li>      <li class="team-item">C1 <time>17:00</time> 3ABF</li>      <li class="team-item">E1 <time>17:00</time> D2</li>      <li class="team-item">A1 <time>14:00</time> 3CDE</li>      <li class="team-item">B2 <time>20:00</time> F2</li>    </ul>     <ul class="bracket bracket-2">      <li class="team-item">QF1 <time>20:00</time> QF2</li>      <li class="team-item">QF3 <time>20:00</time> QF4</li>      <li class="team-item">QF5 <time>20:00</time> QF6</li>      <li class="team-item">QF7 <time>20:00</time> QF8</li>    </ul>      <ul class="bracket bracket-3">      <li class="team-item">SF1 <time>20:00</time> SF2</li>      <li class="team-item">SF3 <time>20:00</time> SF4</li>    </ul>      <ul class="bracket bracket-4">      <li class="team-item">F1 <time>20:00</time> F2</li>    </ul>      <ul class="bracket bracket-5">      <li class="team-item">European Champions</li>    </ul>    </div></div>';
 }
 
 var round = 1;
