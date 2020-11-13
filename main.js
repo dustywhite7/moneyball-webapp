@@ -96,7 +96,7 @@ async function grabData() {
   try{
     const response = fetch("https://raw.githubusercontent.com/dustywhite7/moneyball-webapp/master/data/playersheet2020.json");
     const data = await (await response).json();
-    console.log(`Here: ${data.length}`);
+    // console.log(`Here: ${data.length}`);
     return data;
 } catch(e) {
     console.log(`Error: ${e}`)
@@ -203,7 +203,7 @@ function draftFinal() {
 function simulateSeason() {
   document.getElementById('app').innerHTML = "<h1 class='title'>Simulated Season Results</h1><h3 class='subtitle'>Each team plays each opponent 10 times, resulting in the following outcomes.<br>A team's win probability in each simulated game is calculated with the following equation: <br><br>Pr(win) = 0.5 + 2.032*(OBP<sub>team</sub> - OBP<sub>opponent</sub>) + 0.9*(SLG<sub>team</sub> - SLG<sub>opponent</sub>)</h3><div id='order'></div>";
 
-  teamwins = []
+  teamwins = [];
   for (team=0; team<order.length; team++) {
     teamwins.push(0);
   }
@@ -256,12 +256,496 @@ function simulateGames(team1, team2, n) {
 }
 
 function simulatePlayoffs() {
-  document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Round of 16</h3>    <h3>Quarter-Finals</h3><h3>Semi-Finals</h3><h3>Final</h3><h3>Winner</h3></div><div class="tournament-brackets"><ul class="bracket bracket-1"><li class="team-item">A2 <time>14:00</time> C2</li>      <li class="team-item">D1 <time>20:00</time> 3BEF</li>      <li class="team-item">B1 <time>17:00</time> 3ACD</li>      <li class="team-item">F1 <time>20:00</time> E2</li>      <li class="team-item">C1 <time>17:00</time> 3ABF</li>      <li class="team-item">E1 <time>17:00</time> D2</li>      <li class="team-item">A1 <time>14:00</time> 3CDE</li>      <li class="team-item">B2 <time>20:00</time> F2</li>    </ul>     <ul class="bracket bracket-2">      <li class="team-item">QF1 <time>20:00</time> QF2</li>      <li class="team-item">QF3 <time>20:00</time> QF4</li>      <li class="team-item">QF5 <time>20:00</time> QF6</li>      <li class="team-item">QF7 <time>20:00</time> QF8</li>    </ul>      <ul class="bracket bracket-3">      <li class="team-item">SF1 <time>20:00</time> SF2</li>      <li class="team-item">SF3 <time>20:00</time> SF4</li>    </ul>      <ul class="bracket bracket-4">      <li class="team-item">F1 <time>20:00</time> F2</li>    </ul>      <ul class="bracket bracket-5">      <li class="team-item">European Champions</li>    </ul>    </div></div>';
+  round = 0;
+  ranks = sortTeams();
+  if (order.length==2) {
+    playoff2();
+  } else if (order.length==3){
+    playoff3();
+  } else if (order.length==4){
+    playoff4();
+  } else if (order.length==5){
+    playoff5();
+  } else if (order.length==6){
+    playoff6();
+  } else if (order.length==7){
+    playoff7();
+  } else if (order.length==8){
+    playoff8();
+  } else if (order.length==9){
+    playoff9();
+  } else {
+    playoff10();
+
+  }
+
+// document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Round of 16</h3>    <h3>Quarter-Finals</h3><h3>Semi-Finals</h3><h3>Final</h3><h3>Winner</h3></div><div class="tournament-brackets"><ul class="bracket bracket-1"><li class="team-item">A2 <time>14:00</time> C2</li>      <li class="team-item">D1 <time>20:00</time> 3BEF</li>      <li class="team-item">B1 <time>17:00</time> 3ACD</li>      <li class="team-item">F1 <time>20:00</time> E2</li>      <li class="team-item">C1 <time>17:00</time> 3ABF</li>      <li class="team-item">E1 <time>17:00</time> D2</li>      <li class="team-item">A1 <time>14:00</time> 3CDE</li>      <li class="team-item">B2 <time>20:00</time> F2</li>    </ul>     <ul class="bracket bracket-2">      <li class="team-item">QF1 <time>20:00</time> QF2</li>      <li class="team-item">QF3 <time>20:00</time> QF4</li>      <li class="team-item">QF5 <time>20:00</time> QF6</li>      <li class="team-item">QF7 <time>20:00</time> QF8</li>    </ul>      <ul class="bracket bracket-3">      <li class="team-item">SF1 <time>20:00</time> SF2</li>      <li class="team-item">SF3 <time>20:00</time> SF4</li>    </ul>      <ul class="bracket bracket-4">      <li class="team-item">F1 <time>20:00</time> F2</li>    </ul>      <ul class="bracket bracket-5">      <li class="team-item">European Champions</li>    </ul>    </div></div>';
+}
+
+function playoff2 () {
+  results = simulateGames(1,2,7);
+  var winner;
+  if (results[0]>results[1]) {
+    winner = 'Team 1';
+  } else {
+    winner = 'Team 2';
+  }
+
+  document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Final</h3><h3>Winner</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team 1 <time>' + results[0] + ' - ' + results[1] + '</time> Team 2 </li>    </ul>      <ul class="bracket bracket-2">      <li class="team-item">' + winner + '</li>    </ul>    </div></div><h1 class="title">' + winner + ' is the Champion!</h1>';
+  
+}
+
+function sortTeams () {
+  ranks = [];
+  for (i=0; i<order.length; i++) {
+    ranks.push([i+1, teamwins[i]]);
+  }
+  return ranks.sort((a,b) => b[1]-a[1]);
+}
+
+function playoff3 () {
+  round+=1;
+  
+  if (round==1) {
+    results = []
+    // First Round
+    results.push(simulateGames(ranks[1][0],ranks[2][0],7));
+    if (results[0][0]>results[0][1]) {
+      winner.push(ranks[1][0]);
+    } else {
+      winner.push(ranks[2][0]);
+    }
+    // Second Round
+    results.push(simulateGames(ranks[0][0],winner[0],7));
+    if (results[1][0]>results[1][1]) {
+      winner.push(ranks[0][0]);
+    } else {
+      winner.push(winner[0]);
+    }
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[2][0] + ' </li> <li class="team-item">Team ' + ranks[0][0] + '</li> </ul>      <ul class="bracket bracket-2">      <li class="team-item">Team ' + ranks[0][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff3()">Simulate Round</button></div>';
+  } else if (round==2) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[2][0] + ' </li> <li class="team-item">Team ' + ranks[0][0] + '</li> </ul>      <ul class="bracket bracket-2">      <li class="team-item">Team ' + ranks[0][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[0] + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff3()">Simulate Round</button></div>';
+  } else {
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[2][0] + ' </li> <li class="team-item">Team ' + ranks[0][0] + '</li> </ul>      <ul class="bracket bracket-2">      <li class="team-item">Team ' + ranks[0][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + winner[0] + ' </li>    </ul>    </div></div><h1 class="title"> Team ' + winner[1] + ' is the Champion!</h1>';
+    confetti.start(10000);
+
+  }
+
+  
+}
+
+function playoff4 () {
+  round+=1;
+  
+  if (round==1) {
+    results = []
+    // First Round
+    results.push(simulateGames(ranks[1][0],ranks[2][0],7));
+    if (results[0][0]>results[0][1]) {
+      winner.push(ranks[1][0]);
+    } else {
+      winner.push(ranks[2][0]);
+    }
+    results.push(simulateGames(ranks[0][0],ranks[3][0],7));
+    if (results[1][0]>results[1][1]) {
+      winner.push(ranks[0][0]);
+    } else {
+      winner.push(ranks[3][0]);
+    }
+    // Second Round
+    results.push(simulateGames(winner[1],winner[0],7));
+    if (results[2][0]>results[2][1]) {
+      winner.push(winner[1]);
+    } else {
+      winner.push(winner[0]);
+    }
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[2][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[3][0] + ' </li> </ul>      <ul class="bracket bracket-2">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff4()">Simulate Round</button></div>';
+  } else if (round==2) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[2][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[3][0] + ' </li> </ul>      <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[1] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[0] + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff4()">Simulate Round</button></div>';
+  } else {
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[2][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[3][0] + ' </li> </ul>      <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[1] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + winner[0] + ' </li>    </ul>    </div></div><h1 class="title"> Team ' + winner[2] + ' is the Champion!</h1>';
+    confetti.start(10000);
+  }
+    
+  
+}
+
+function playoff5 () {
+  round+=1;
+  
+  if (round==1) {
+    results = []
+     // Play-in Round
+     results.push(simulateGames(ranks[3][0],ranks[4][0],7));
+     if (results[0][0]>results[0][1]) {
+       winner.push(ranks[3][0]);
+     } else {
+       winner.push(ranks[4][0]);
+     }
+    // First Round
+    results.push(simulateGames(ranks[1][0],ranks[2][0],7));
+    if (results[1][0]>results[1][1]) {
+      winner.push(ranks[1][0]);
+    } else {
+      winner.push(ranks[2][0]);
+    }
+    results.push(simulateGames(ranks[0][0],winner[0],7));
+    if (results[2][0]>results[2][1]) {
+      winner.push(ranks[0][0]);
+    } else {
+      winner.push(winner[0]);
+    }
+    // Second Round
+    results.push(simulateGames(winner[2],winner[1],7));
+    if (results[3][0]>results[3][1]) {
+      winner.push(winner[2]);
+    } else {
+      winner.push(winner[1]);
+    }
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li> <li class="team-item">Team ' + ranks[2][0] + '</li> <li class="team-item">Team ' + ranks[1][0] + '</li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[2][0] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff5()">Simulate Round</button></div>';
+  } else if (round==2) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li> <li class="team-item">Team ' + ranks[2][0] + '</li> <li class="team-item">Team ' + ranks[1][0] + '</li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[2][0] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff5()">Simulate Round</button></div>';
+  } else if (round==3) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li> <li class="team-item">Team ' + ranks[2][0] + '</li> <li class="team-item">Team ' + ranks[1][0] + '</li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[0] + ' <time>' + results[2][1] + ' - ' + results[2][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[2][0] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[1] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[2] + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff5()">Simulate Round</button></div>';
+  } else {
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li> <li class="team-item">Team ' + ranks[2][0] + '</li> <li class="team-item">Team ' + ranks[1][0] + '</li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[0] + ' <time>' + results[2][1] + ' - ' + results[2][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[2][0] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[1] + ' <time>' + results[3][1] + ' - ' + results[3][0] + '</time> Team ' + winner[2] + ' </li>    </ul>    </div></div><h1 class="title"> Team ' + winner[3] + ' is the Champion!</h1>';
+    confetti.start(10000);
+  }
+}
+
+function playoff6 () {
+  round+=1;
+  
+  if (round==1) {
+    results = []
+     // Play-in Round
+     results.push(simulateGames(ranks[2][0],ranks[5][0],7));
+     if (results[0][0]>results[0][1]) {
+       winner.push(ranks[2][0]);
+     } else {
+       winner.push(ranks[5][0]);
+     }
+     // Play-in Round
+     results.push(simulateGames(ranks[3][0],ranks[4][0],7));
+     if (results[1][0]>results[1][1]) {
+       winner.push(ranks[3][0]);
+     } else {
+       winner.push(ranks[4][0]);
+     }
+    // First Round
+    results.push(simulateGames(ranks[1][0],winner[0],7));
+    if (results[2][0]>results[2][1]) {
+      winner.push(ranks[1][0]);
+    } else {
+      winner.push(winner[0]);
+    }
+    results.push(simulateGames(ranks[0][0],winner[1],7));
+    if (results[3][0]>results[3][1]) {
+      winner.push(ranks[0][0]);
+    } else {
+      winner.push(winner[1]);
+    }
+    // Second Round
+    results.push(simulateGames(winner[2],winner[3],7));
+    if (results[4][0]>results[4][1]) {
+      winner.push(winner[2]);
+    } else {
+      winner.push(winner[3]);
+    }
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li> <li class="team-item">Team ' + ranks[1][0] + '</li>  <li class="team-item">Team ' + ranks[2][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff6()">Simulate Round</button></div>';
+  } else if (round==2) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li> <li class="team-item">Team ' + ranks[1][0] + '</li>  <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[1] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[0] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff6()">Simulate Round</button></div>';
+  } else if (round==3) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li> <li class="team-item">Team ' + ranks[1][0] + '</li>  <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[1] + ' <time>' + results[3][1] + ' - ' + results[3][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + winner[0] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[3] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[2] + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff6()">Simulate Round</button></div>';
+  } else {
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li> <li class="team-item">Team ' + ranks[1][0] + '</li>  <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[1] + ' <time>' + results[3][1] + ' - ' + results[3][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + winner[0] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[3] + ' <time>' + results[4][1] + ' - ' + results[4][0] + '</time> Team ' + winner[2] + ' </li>    </ul>    </div></div><h1 class="title"> Team ' + winner[4] + ' is the Champion!</h1>';
+    confetti.start(10000);
+  }
+}
+
+function playoff7 () {
+  round+=1;
+  
+  if (round==1) {
+    results = []
+     // Play-in Round
+     results.push(simulateGames(ranks[1][0],ranks[6][0],7));
+     if (results[0][0]>results[0][1]) {
+       winner.push(ranks[1][0]);
+     } else {
+       winner.push(ranks[6][0]);
+     }
+     results.push(simulateGames(ranks[2][0],ranks[5][0],7));
+     if (results[1][0]>results[1][1]) {
+       winner.push(ranks[2][0]);
+     } else {
+       winner.push(ranks[5][0]);
+     }
+     results.push(simulateGames(ranks[3][0],ranks[4][0],7));
+     if (results[2][0]>results[2][1]) {
+       winner.push(ranks[3][0]);
+     } else {
+       winner.push(ranks[4][0]);
+     }
+    // First Round
+    results.push(simulateGames(winner[2],ranks[0][0],7));
+    if (results[3][0]>results[3][1]) {
+      winner.push(winner[2]);
+    } else {
+      winner.push(ranks[0][0]);
+    }
+    results.push(simulateGames(winner[0],winner[1],7));
+    if (results[4][0]>results[4][1]) {
+      winner.push(winner[0]);
+    } else {
+      winner.push(winner[1]);
+    }
+    // Second Round
+    results.push(simulateGames(winner[4],winner[3],7));
+    if (results[5][0]>results[5][1]) {
+      winner.push(winner[4]);
+    } else {
+      winner.push(winner[3]);
+    }
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li>  <li class="team-item">Team ' + ranks[6][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[1][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff7()">Simulate Round</button></div>';
+  } else if (round==2) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li>  <li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][1] + ' - ' + results[0][0] + '</time> Team ' + ranks[1][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[2] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + winner[0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[1] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff7()">Simulate Round</button></div>';
+  } else if (round==3) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li>  <li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][1] + ' - ' + results[0][0] + '</time> Team ' + ranks[1][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[2] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + winner[0] + ' <time>' + results[4][0] + ' - ' + results[4][1] + '</time> Team ' + winner[1] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[3] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[4] + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff7()">Simulate Round</button></div>';
+  } else {
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild-Card</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li>  <li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][1] + ' - ' + results[0][0] + '</time> Team ' + ranks[1][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[2] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + winner[0] + ' <time>' + results[4][0] + ' - ' + results[4][1] + '</time> Team ' + winner[1] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[3] + ' <time>' + results[5][1] + ' - ' + results[5][0] + '</time> Team ' + winner[4] + ' </li>    </ul>    </div></div><h1 class="title"> Team ' + winner[5] + ' is the Champion!</h1>';
+    confetti.start(10000);
+  }
+}
+
+function playoff8 () {
+  round+=1;
+  
+  if (round==1) {
+    results = []
+     // Quarter-Finals
+     results.push(simulateGames(ranks[1][0],ranks[6][0],7));
+     if (results[0][0]>results[0][1]) {
+       winner.push(ranks[1][0]);
+     } else {
+       winner.push(ranks[6][0]);
+     }
+     results.push(simulateGames(ranks[2][0],ranks[5][0],7));
+     if (results[1][0]>results[1][1]) {
+       winner.push(ranks[2][0]);
+     } else {
+       winner.push(ranks[5][0]);
+     }
+     results.push(simulateGames(ranks[3][0],ranks[4][0],7));
+     if (results[2][0]>results[2][1]) {
+       winner.push(ranks[3][0]);
+     } else {
+       winner.push(ranks[4][0]);
+     }
+     results.push(simulateGames(ranks[0][0],ranks[7][0],7));
+     if (results[3][0]>results[3][1]) {
+       winner.push(ranks[0][0]);
+     } else {
+       winner.push(ranks[7][0]);
+     }
+    // Semi-Finals
+    results.push(simulateGames(winner[2],winner[3],7));
+    if (results[4][0]>results[4][1]) {
+      winner.push(winner[2]);
+    } else {
+      winner.push(winner[3]);
+    }
+    results.push(simulateGames(winner[0],winner[1],7));
+    if (results[5][0]>results[5][1]) {
+      winner.push(winner[0]);
+    } else {
+      winner.push(winner[1]);
+    }
+    // Final
+    results.push(simulateGames(winner[4],winner[5],7));
+    if (results[6][0]>results[6][1]) {
+      winner.push(winner[4]);
+    } else {
+      winner.push(winner[3]);
+    }
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[7][0] + ' </li>  <li class="team-item">Team ' + ranks[6][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[1][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>  <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff8()">Simulate Round</button></div>';
+  } else if (round==2) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[7][0] + ' </li>  <li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][1] + ' - ' + results[0][0] + '</time> Team ' + ranks[1][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[2] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[3] + ' </li>  <li class="team-item">Team ' + winner[0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[1] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff8()">Simulate Round</button></div>';
+  } else if (round==3) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[7][0] + ' </li>  <li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][1] + ' - ' + results[0][0] + '</time> Team ' + ranks[1][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[2] + ' <time>' + results[4][0] + ' - ' + results[4][1] + '</time> Team ' + winner[3] + ' </li>  <li class="team-item">Team ' + winner[0] + ' <time>' + results[5][0] + ' - ' + results[5][1] + '</time> Team ' + winner[1] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[4] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[5] + ' </li>    </ul>    </div></div><br><br><div class="control"><button type="submit" class="button is-primary" onclick="playoff8()">Simulate Round</button></div>';
+  } else {
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[7][0] + ' </li>  <li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][1] + ' - ' + results[0][0] + '</time> Team ' + ranks[1][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[2] + ' <time>' + results[4][0] + ' - ' + results[4][1] + '</time> Team ' + winner[3] + ' </li>  <li class="team-item">Team ' + winner[0] + ' <time>' + results[5][0] + ' - ' + results[5][1] + '</time> Team ' + winner[1] + ' </li> </ul>      <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[4] + ' <time>' + results[6][0] + ' - ' + results[6][1] + '</time> Team ' + winner[5] + ' </li>    </ul>    </div></div><h1 class="title"> Team ' + winner[6] + ' is the Champion!</h1>';
+    confetti.start(10000);
+  }
+}
+
+function playoff9 () {
+  round+=1;
+  
+  if (round==1) {
+    results = []
+     // Wild Card
+     results.push(simulateGames(ranks[7][0],ranks[8][0],7));
+     if (results[0][0]>results[0][1]) {
+       winner.push(ranks[7][0]);
+     } else {
+       winner.push(ranks[8][0]);
+     }
+     // Quarter-Finals
+     results.push(simulateGames(ranks[1][0],ranks[6][0],7));
+     if (results[1][0]>results[1][1]) {
+       winner.push(ranks[1][0]);
+     } else {
+       winner.push(ranks[6][0]);
+     }
+     results.push(simulateGames(ranks[2][0],ranks[5][0],7));
+     if (results[2][0]>results[2][1]) {
+       winner.push(ranks[2][0]);
+     } else {
+       winner.push(ranks[5][0]);
+     }
+     results.push(simulateGames(ranks[3][0],ranks[4][0],7));
+     if (results[3][0]>results[3][1]) {
+       winner.push(ranks[3][0]);
+     } else {
+       winner.push(ranks[4][0]);
+     }
+     results.push(simulateGames(ranks[0][0],winner[0],7));
+     if (results[4][0]>results[4][1]) {
+       winner.push(ranks[0][0]);
+     } else {
+       winner.push(winner[0]);
+     }
+    // Semi-Finals
+    results.push(simulateGames(winner[3],winner[4],7));
+    if (results[5][0]>results[5][1]) {
+      winner.push(winner[3]);
+    } else {
+      winner.push(winner[4]);
+    }
+    results.push(simulateGames(winner[1],winner[2],7));
+    if (results[6][0]>results[6][1]) {
+      winner.push(winner[1]);
+    } else {
+      winner.push(winner[2]);
+    }
+    // Final
+    results.push(simulateGames(winner[5],winner[6],7));
+    if (results[7][0]>results[7][1]) {
+      winner.push(winner[5]);
+    } else {
+      winner.push(winner[6]);
+    }
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + '</li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[6][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>  <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><div class="control"><button type="submit" class="button is-primary" onclick="playoff9()">Simulate Round</button></div>';
+  } else if (round==2) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + '</li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[6][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>  <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><div class="control"><button type="submit" class="button is-primary" onclick="playoff9()">Simulate Round</button></div>';
+  } else if (round==3) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + '</li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[0] + ' <time>' + results[4][1] + ' - ' + results[4][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[6][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[4] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[3] + ' </li>  <li class="team-item">Team ' + winner[1] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[2] + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><div class="control"><button type="submit" class="button is-primary" onclick="playoff9()">Simulate Round</button></div>';
+  } else if (round==4) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + '</li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[0] + ' <time>' + results[4][1] + ' - ' + results[4][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[6][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[4] + ' <time>' + results[5][1] + ' - ' + results[5][0] + '</time> Team ' + winner[3] + ' </li>  <li class="team-item">Team ' + winner[1] + ' <time>' + results[6][0] + ' - ' + results[6][1] + '</time> Team ' + winner[2] + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + winner[5] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[6] + ' </li>    </ul>    </div></div><div class="control"><button type="submit" class="button is-primary" onclick="playoff9()">Simulate Round</button></div>';
+  } else {
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + '</li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[0] + ' <time>' + results[4][1] + ' - ' + results[4][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[6][0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[4] + ' <time>' + results[5][1] + ' - ' + results[5][0] + '</time> Team ' + winner[3] + ' </li>  <li class="team-item">Team ' + winner[1] + ' <time>' + results[6][0] + ' - ' + results[6][1] + '</time> Team ' + winner[2] + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + winner[5] + ' <time>' + results[7][0] + ' - ' + results[7][1] + '</time> Team ' + winner[6] + ' </li>    </ul>    </div></div><h1 class="title"> Team ' + winner[7] + ' is the Champion!</h1>';
+    confetti.start(10000);
+  }
+}
+
+function playoff10 () {
+  round+=1;
+  
+  if (round==1) {
+    results = []
+     // Wild Card
+     results.push(simulateGames(ranks[6][0],ranks[9][0],7));
+     if (results[0][0]>results[0][1]) {
+       winner.push(ranks[6][0]);
+     } else {
+       winner.push(ranks[9][0]);
+     }
+     results.push(simulateGames(ranks[7][0],ranks[8][0],7));
+     if (results[1][0]>results[1][1]) {
+       winner.push(ranks[7][0]);
+     } else {
+       winner.push(ranks[8][0]);
+     }
+     // Quarter-Finals
+     results.push(simulateGames(ranks[1][0],winner[0],7));
+     if (results[2][0]>results[2][1]) {
+       winner.push(ranks[1][0]);
+     } else {
+       winner.push(winner[0]);
+     }
+     results.push(simulateGames(ranks[2][0],ranks[5][0],7));
+     if (results[3][0]>results[3][1]) {
+       winner.push(ranks[2][0]);
+     } else {
+       winner.push(ranks[5][0]);
+     }
+     results.push(simulateGames(ranks[3][0],ranks[4][0],7));
+     if (results[4][0]>results[4][1]) {
+       winner.push(ranks[3][0]);
+     } else {
+       winner.push(ranks[4][0]);
+     }
+     results.push(simulateGames(ranks[0][0],winner[1],7));
+     if (results[5][0]>results[5][1]) {
+       winner.push(ranks[0][0]);
+     } else {
+       winner.push(winner[1]);
+     }
+    // Semi-Finals
+    results.push(simulateGames(winner[2],winner[3],7));
+    if (results[6][0]>results[6][1]) {
+      winner.push(winner[2]);
+    } else {
+      winner.push(winner[3]);
+    }
+    results.push(simulateGames(winner[4],winner[5],7));
+    if (results[7][0]>results[7][1]) {
+      winner.push(winner[4]);
+    } else {
+      winner.push(winner[5]);
+    }
+    // Final
+    results.push(simulateGames(winner[6],winner[7],7));
+    if (results[8][0]>results[8][1]) {
+      winner.push(winner[6]);
+    } else {
+      winner.push(winner[7]);
+    }
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[9][0] + ' </li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>  <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><div class="control"><button type="submit" class="button is-primary" onclick="playoff10()">Simulate Round</button></div>';
+  } else if (round==2) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[9][0] + ' </li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[1] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>  <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><div class="control"><button type="submit" class="button is-primary" onclick="playoff10()">Simulate Round</button></div>';
+  } else if (round==3) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[9][0] + ' </li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[1] + ' <time>' + results[5][1] + ' - ' + results[5][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[4][0] + ' - ' + results[4][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + winner[0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[5] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[4] + ' </li>  <li class="team-item">Team ' + winner[2] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[3] + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + '?' + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + '?' + ' </li>    </ul>    </div></div><div class="control"><button type="submit" class="button is-primary" onclick="playoff10()">Simulate Round</button></div>';
+  } else if (round==4) {
+    
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[9][0] + ' </li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[1] + ' <time>' + results[5][1] + ' - ' + results[5][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[4][0] + ' - ' + results[4][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + winner[0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[5] + ' <time>' + results[7][1] + ' - ' + results[7][0] + '</time> Team ' + winner[4] + ' </li>  <li class="team-item">Team ' + winner[2] + ' <time>' + results[6][0] + ' - ' + results[6][1] + '</time> Team ' + winner[3] + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + winner[7] + ' <time>' + '?' + ' - ' + '?' + '</time> Team ' + winner[6] + ' </li>    </ul>    </div></div><div class="control"><button type="submit" class="button is-primary" onclick="playoff10()">Simulate Round</button></div>';
+  } else {
+    document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Wild Card</h3><h3>Quarter-Finals</h3><h3>Semi-Final</h3><h3>Final</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team ' + ranks[7][0] + ' <time>' + results[1][0] + ' - ' + results[1][1] + '</time> Team ' + ranks[8][0] + ' </li>  <li class="team-item">Team ' + ranks[0][0] + '</li><li class="team-item">Team ' + ranks[3][0] + '</li><li class="team-item">Team ' + ranks[4][0] + '</li><li class="team-item">Team ' + ranks[1][0] + '</li><li class="team-item">Team ' + ranks[6][0] + ' <time>' + results[0][0] + ' - ' + results[0][1] + '</time> Team ' + ranks[9][0] + ' </li><li class="team-item">Team ' + ranks[2][0] + '</li><li class="team-item">Team ' + ranks[5][0] + '</li> </ul><ul class="bracket bracket-2">      <li class="team-item">Team ' + winner[1] + ' <time>' + results[5][1] + ' - ' + results[5][0] + '</time> Team ' + ranks[0][0] + ' </li>  <li class="team-item">Team ' + ranks[3][0] + ' <time>' + results[4][0] + ' - ' + results[4][1] + '</time> Team ' + ranks[4][0] + ' </li>  <li class="team-item">Team ' + ranks[1][0] + ' <time>' + results[2][0] + ' - ' + results[2][1] + '</time> Team ' + winner[0] + ' </li>   <li class="team-item">Team ' + ranks[2][0] + ' <time>' + results[3][0] + ' - ' + results[3][1] + '</time> Team ' + ranks[5][0] + ' </li> </ul> <ul class="bracket bracket-3">      <li class="team-item">Team ' + winner[5] + ' <time>' + results[7][1] + ' - ' + results[7][0] + '</time> Team ' + winner[4] + ' </li>  <li class="team-item">Team ' + winner[2] + ' <time>' + results[6][0] + ' - ' + results[6][1] + '</time> Team ' + winner[3] + ' </li> </ul>      <ul class="bracket bracket-4">      <li class="team-item">Team ' + winner[7] + ' <time>' + results[8][1] + ' - ' + results[8][0] + '</time> Team ' + winner[6] + ' </li>    </ul>    </div></div><h1 class="title"> Team ' + winner[8] + ' is the Champion!</h1>';
+    confetti.start(10000);
+  }
 }
 
 var round = 1;
 var teamOn = 0;
-var order, stats, salary_cap;
+var results = [];
+var winner = [];
+var order, stats, salary_cap, teamwins, ranks;
 
 data = (async function() {
   data = await grabData();
