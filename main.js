@@ -292,6 +292,8 @@ function playoff2 () {
   }
 
   document.getElementById('app').innerHTML ='<h1 class="title">The Results of the Tournament</h1><div class="tournament-container"><div class="tournament-headers"><h3>Final</h3><h3>Winner</h3></div> <div class="tournament-brackets"><ul class="bracket bracket-1">      <li class="team-item">Team 1 <time>' + results[0] + ' - ' + results[1] + '</time> Team 2 </li>    </ul>      <ul class="bracket bracket-2">      <li class="team-item">' + winner + '</li>    </ul>    </div></div><h1 class="title">' + winner + ' is the Champion!</h1>';
+
+  confetti.start(10000);
   
 }
 
