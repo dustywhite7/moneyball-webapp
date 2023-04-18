@@ -94,7 +94,7 @@ function updateDraftList() {
 
 async function grabData() {
   try{
-    const response = fetch("https://raw.githubusercontent.com/dustywhite7/moneyball-webapp/master/data/playersheet2022.json");
+    const response = fetch("https://raw.githubusercontent.com/dustywhite7/moneyball-webapp/master/data/playersheet2023.json");
     const data = await (await response).json();
     // console.log(`Here: ${data.length}`);
     return data;
